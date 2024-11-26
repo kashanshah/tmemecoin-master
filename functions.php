@@ -7,6 +7,9 @@
 
 require_once get_template_directory() . '/inc/class-wp-bootstrap-navwalker.php';
 require_once get_template_directory() . '/inc/social-navigation-widget.php';
+require_once get_template_directory() . '/inc/class-wp-repeater-control.php';
+require_once get_template_directory() . '/inc/customizer-utils.php';
+require_once get_template_directory() . '/inc/tokenomics.php';
 require_once get_template_directory() . '/inc/footer-menu-widget.php';
 require_once get_template_directory() . '/inc/footer-intro-widget.php';
 require_once get_template_directory() . '/inc/footer.php';
@@ -55,6 +58,7 @@ function memecoin_master_theme_support() {
     ));
     add_theme_support('widgets');
     remove_theme_support('widgets-block-editor');
+    add_theme_support('customize-selective-refresh-widgets');
 }
 add_action('after_setup_theme', 'memecoin_master_theme_support');
 
@@ -76,7 +80,7 @@ function memecoin_master_customize_register($wp_customize) {
     // Add Control to Enable/Disable Preloader
     $wp_customize->add_control('enable_preloader_control', array(
         'label'    => __('Enable Preloader', 'memecoin-master'),
-        'section'  => 'preloader_section',
+        'section'  => 'global_options_section',
         'settings' => 'enable_preloader',
         'type'     => 'checkbox',
     ));
@@ -96,11 +100,6 @@ function memecoin_master_customize_register($wp_customize) {
     ));
 }
 add_action('customize_register', 'memecoin_master_customize_register');
-
-function memecoin_master_customize_support() {
-    add_theme_support('customize-selective-refresh-widgets');
-}
-add_action('after_setup_theme', 'memecoin_master_customize_support');
 
 
 // Add customizer settings

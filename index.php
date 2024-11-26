@@ -12,7 +12,7 @@ get_header();
     <?php
     // Example: Include template parts
     get_template_part('template-parts/hero');
-//    get_template_part('template-parts/section-about');
+    get_template_part('template-parts/tokenomics');
 //    get_template_part('template-parts/section-services');
 //    get_template_part('template-parts/section-contact');
     ?>
