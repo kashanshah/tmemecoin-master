@@ -7,17 +7,23 @@
 
 require_once get_template_directory() . '/inc/class-wp-bootstrap-navwalker.php';
 require_once get_template_directory() . '/inc/social-navigation-widget.php';
+
 require_once get_template_directory() . '/inc/class-wp-repeater-control.php';
 require_once get_template_directory() . '/inc/customizer-utils.php';
+
+require_once get_template_directory() . '/inc/hero.php';
+
+require_once get_template_directory() . '/inc/about.php';
+
 require_once get_template_directory() . '/inc/tokenomics.php';
+
 require_once get_template_directory() . '/inc/footer-menu-widget.php';
 require_once get_template_directory() . '/inc/footer-intro-widget.php';
 require_once get_template_directory() . '/inc/footer.php';
-require_once get_template_directory() . '/inc/hero.php';
 
 function memecoin_master_enqueue_scripts() {
     // Enqueue main stylesheet
-    wp_enqueue_style('memecoin-master-style', get_template_directory_uri() . '/assets/css/main.css', [], '1.0.1', 'all');
+    wp_enqueue_style('tknfc_textdomain-style', get_template_directory_uri() . '/assets/css/main.css', [], '1.0.1', 'all');
 
     // Enqueue main JavaScript
     // Enqueue jQuery (included in WordPress core)
@@ -30,17 +36,17 @@ function memecoin_master_enqueue_scripts() {
     wp_enqueue_script('bootstrap', get_template_directory_uri() . '/assets/js/bootstrap.bundle.min.js', ['jquery'], '5.1.0', true);
 
     // Enqueue custom JS files
-    wp_enqueue_script('memecoin-master-plugins-script', get_template_directory_uri() . '/assets/js/plugins.js', ['jquery'], '1.0', true);
-    wp_enqueue_script('memecoin-master-syotimer-script', get_template_directory_uri() . '/assets/js/jquery.syotimer.min.js', ['jquery'], '1.0', true);
-    wp_enqueue_script('memecoin-master-script', get_template_directory_uri() . '/assets/js/main.js', ['jquery'], '1.0', true);
-    wp_enqueue_script('memecoin-master-copy-script', get_template_directory_uri() . '/assets/js/copy.js', ['jquery'], '1.0', true);
+    wp_enqueue_script('tknfc_textdomain-plugins-script', get_template_directory_uri() . '/assets/js/plugins.js', ['jquery'], '1.0', true);
+    wp_enqueue_script('tknfc_textdomain-syotimer-script', get_template_directory_uri() . '/assets/js/jquery.syotimer.min.js', ['jquery'], '1.0', true);
+    wp_enqueue_script('tknfc_textdomain-script', get_template_directory_uri() . '/assets/js/main.js', ['jquery'], '1.0', true);
+    wp_enqueue_script('tknfc_textdomain-copy-script', get_template_directory_uri() . '/assets/js/copy.js', ['jquery'], '1.0', true);
 }
 add_action('wp_enqueue_scripts', 'memecoin_master_enqueue_scripts');
 
 // Register navigation menus
 function memecoin_master_register_menus() {
     register_nav_menus([
-        'main-menu' => __('Main Menu', 'memecoin-master'),
+        'main-menu' => __('Main Menu', 'tknfc_textdomain'),
     ]);
 }
 add_action('init', 'memecoin_master_register_menus');
@@ -65,9 +71,9 @@ add_action('after_setup_theme', 'memecoin_master_theme_support');
 function memecoin_master_customize_register($wp_customize) {
     // Add a Global Options Section
     $wp_customize->add_section('global_options_section', array(
-        'title'       => __('Global Options', 'memecoin-master'),
+        'title'       => __('Global Options', 'tknfc_textdomain'),
         'priority'    => 20,
-        'description' => __('Manage global settings for the theme', 'memecoin-master'),
+        'description' => __('Manage global settings for the theme', 'tknfc_textdomain'),
     ));
 
     // Add Setting for Enabling/Disabling Preloader
@@ -79,7 +85,7 @@ function memecoin_master_customize_register($wp_customize) {
 
     // Add Control to Enable/Disable Preloader
     $wp_customize->add_control('enable_preloader_control', array(
-        'label'    => __('Enable Preloader', 'memecoin-master'),
+        'label'    => __('Enable Preloader', 'tknfc_textdomain'),
         'section'  => 'global_options_section',
         'settings' => 'enable_preloader',
         'type'     => 'checkbox',
@@ -93,7 +99,7 @@ function memecoin_master_customize_register($wp_customize) {
 
     // Add Contract Address Control
     $wp_customize->add_control('global_contract_address_control', array(
-        'label'    => __('Contract Address', 'memecoin-master'),
+        'label'    => __('Contract Address', 'tknfc_textdomain'),
         'section'  => 'global_options_section',
         'settings' => 'global_contract_address',
         'type'     => 'text',
@@ -101,5 +107,69 @@ function memecoin_master_customize_register($wp_customize) {
 }
 add_action('customize_register', 'memecoin_master_customize_register');
 
+function theme_customize_register($wp_customize) {
+     // Add the section for colors (if not already present)
+    $wp_customize->add_section('theme_colors', array(
+        'title'    => __('Theme Colors', 'your-theme'),
+        'priority' => 30,
+    ));
+    // Add primary color setting and control
+    $wp_customize->add_setting('theme_primary_color', array(
+        'default'           => '#742f06',
+        'sanitize_callback' => 'sanitize_hex_color',
+    ));
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'theme_primary_color', array(
+        'label'   => __('Primary Colors', 'your-theme'),
+        'section' => 'theme_colors',
+        'settings' => 'theme_primary_color',
+    )));
+    
+    // Add secondary color setting and control
+    $wp_customize->add_setting('theme_secondary_color', array(
+        'default'           => '#d4722b',
+        'sanitize_callback' => 'sanitize_hex_color',
+    ));
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'theme_secondary_color', array(
+        'label'   => __('Secondry Color', 'your-theme'),
+        'section' => 'theme_colors',
+        'settings' => 'theme_secondary_color',
+    )));
+    
+    // Add background color setting and control
+    $wp_customize->add_setting('theme_background_color', array(
+        'default'           => '#ffffff',
+        'sanitize_callback' => 'sanitize_hex_color',
+    ));
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'theme_background_color', array(
+        'label'   => __('Background Color', 'your-theme'),
+        'section' => 'theme_colors',
+        'settings' => 'theme_background_color',
+    )));
+}
 
-// Add customizer settings
+add_action('customize_register', 'theme_customize_register');
+
+function theme_customize_css() {
+    ?>
+    <style type="text/css">
+        body {
+            background-color: <?php echo get_theme_mod('theme_background_color', '#ffffff'); ?>;
+        }
+        h1, h2, h3, h4, h5, h6, p{
+            color: <?php echo get_theme_mod('theme_primary_color', '#742f06'); ?>;
+        }
+        span {
+            color: <?php echo get_theme_mod('theme_secondary_color', '#d4722b'); ?>;
+        }
+        
+        a.btn{
+            color: <?php echo get_theme_mod('theme_background_color', '#ffffff'); ?>;
+            background-color: <?php echo get_theme_mod('theme_secondary_color', '#d4722b'); ?>;
+        }
+    </style>
+    <?php
+}
+
+add_action('wp_head', 'theme_customize_css');
+
+

@@ -1,81 +1,79 @@
 <?php
-if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
-}
+/**
+ * Dynamic Repeater Control for WordPress Customizer
+ */
 
-if (!class_exists('WP_Customize_Control')) {
-    return; // Ensure the WP_Customize_Control class exists
-}
+// Custom Dynamic Repeater Control Class
+if (class_exists('WP_Customize_Control')) {
+    class WP_Customize_Dynamic_Repeater_Control extends WP_Customize_Control {
+        public $type = 'dynamic_repeater';
+        public $fields = [];
 
-class WP_Customize_Repeater_Control extends WP_Customize_Control {
-    public $type = 'repeater';
-    public $fields = array();
+        public function enqueue() {
+            wp_enqueue_script('dynamic-repeater-customizer', get_template_directory_uri() . '/assets/js/customizer-repeater.js', ['jquery', 'customize-controls'], null, true);
+            wp_enqueue_style('dynamic-repeater-customizer-css', get_template_directory_uri() . '/assets/css/customizer-repeater.css');
+        }
 
-    public function render_content() {
-        ?>
-        <label>
-            <span class="customize-control-title"><?php echo esc_html($this->label); ?></span>
-            <?php if ($this->description): ?>
+        public function render_content() {
+            ?>
+            <label>
+                <span class="customize-control-title"><?php echo esc_html($this->label); ?></span>
                 <span class="description customize-control-description"><?php echo esc_html($this->description); ?></span>
-            <?php endif; ?>
-        </label>
-        <ul class="repeater-list" data-setting="<?php echo esc_attr($this->id); ?>">
+                <ul class="repeater-items" data-fields="<?php echo esc_attr(json_encode($this->fields)); ?>">
+                    <?php
+                    $values = json_decode($this->value(), true);
+                    if (!empty($values)) {
+                        foreach ($values as $item) {
+                            ?>
+                            <li class="repeater-item">
+                                <?php foreach ($this->fields as $field) { ?>
+                                    <div class="repeater-field">
+                                        <?php if ($field['type'] === 'image') { ?>
+                                            <div class="image-selector">
+                                                <input type="hidden"
+                                                       class="repeater-item-<?php echo esc_attr($field['id']); ?>"
+                                                       data-field-key="<?php echo esc_attr($field['id']); ?>"
+                                                       value="<?php echo esc_url($item[$field['id']] ?? ''); ?>">
+                                                <button class="select-image-button button">Select Image</button>
+                                                <img class="image-preview"
+                                                     src="<?php echo esc_url($item[$field['id']] ?? ''); ?>"
+                                                     style="<?php echo empty($item[$field['id']]) ? 'display:none;' : ''; ?> max-width:100px; margin-top:10px;">
+                                            </div>
+                                        <?php } else { ?>
+                                            <input type="<?php echo esc_attr($field['type']); ?>"
+                                                   class="repeater-item-<?php echo esc_attr($field['id']); ?>"
+                                                   data-field-key="<?php echo esc_attr($field['id']); ?>"
+                                                   placeholder="<?php echo esc_attr($field['label']); ?>"
+                                                   value="<?php echo esc_attr($item[$field['id']] ?? ''); ?>">
+                                        <?php } ?>
+                                    </div>
+                                <?php } ?>
+                                <button class="repeater-item-remove">Remove</button>
+                            </li>
+                            <?php
+                        }
+                    }
+                    ?>
+                </ul>
+                <button class="repeater-add-item">Add Item</button>
+                <input type="hidden" <?php $this->link(); ?> value="<?php echo esc_attr($this->value()); ?>" class="repeater-value">
+            </label>
             <?php
-            $values = json_decode($this->value(), true) ?: array();
-            $values = is_array($values) ? $values : array();
-            foreach ($values as $value): ?>
-                <li class="repeater-item">
-                    <?php foreach ($this->fields as $key => $field): ?>
-                        <label><?php echo esc_html($field['label']); ?></label>
-                        <?php if ($field['type'] === 'text'): ?>
-                            <input type="text" class="repeater-input" data-key="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr($value[$key] ?? ''); ?>" />
-                        <?php elseif ($field['type'] === 'textarea'): ?>
-                            <textarea class="repeater-input" data-key="<?php echo esc_attr($key); ?>"><?php echo esc_html($value[$key] ?? ''); ?></textarea>
-                        <?php elseif ($field['type'] === 'image'): ?>
-                            <input type="text" class="repeater-input" data-key="<?php echo esc_attr($key); ?>" value="<?php echo esc_url($value[$key] ?? ''); ?>" />
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                    <button type="button" class="remove-repeater-item">Remove</button>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-        <button type="button" class="add-repeater-item">Add Item</button>
-        <script type="text/template" id="repeater-item-template-<?php echo esc_attr($this->id); ?>">
-            <li class="repeater-item">
-                <?php foreach ($this->fields as $key => $field): ?>
-                    <label><?php echo esc_html($field['label']); ?></label>
-                    <?php if ($field['type'] === 'text'): ?>
-                        <input type="text" class="repeater-input" data-key="<?php echo esc_attr($key); ?>" />
-                    <?php elseif ($field['type'] === 'textarea'): ?>
-                        <textarea class="repeater-input" data-key="<?php echo esc_attr($key); ?>"></textarea>
-                    <?php elseif ($field['type'] === 'image'): ?>
-                        <input type="text" class="repeater-input" data-key="<?php echo esc_attr($key); ?>" />
-                    <?php endif; ?>
-                <?php endforeach; ?>
-                <button type="button" class="remove-repeater-item">Remove</button>
-            </li>
-        </script>
-        <input type="hidden" class="repeater-value" value="<?php echo esc_attr($this->value()); ?>" <?php $this->link(); ?> />
-        <?php
-    }
-}
-
-function sanitize_repeater_field($input) {
-    $decoded = json_decode($input, true);
-    if (!is_array($decoded)) {
-        return json_encode(array());
-    }
-    // Optionally validate each field
-    foreach ($decoded as &$item) {
-        foreach ($item as $key => &$value) {
-            $value = sanitize_text_field($value);
         }
     }
-    return json_encode($decoded);
 }
 
-function enqueue_customizer_scripts() {
-    wp_enqueue_script('customizer-repeater', get_template_directory_uri() . '/assets/js/customizer-repeater.js', array('jquery', 'customize-controls'), '1.0', true);
+// Register Dynamic Sections and Controls
+// Sanitize Repeater Data
+function tknfc_sanitize_repeater($input) {
+    $decoded = json_decode($input, true);
+    if (is_array($decoded)) {
+        foreach ($decoded as $key => $item) {
+            foreach ($item as $field_key => $field_value) {
+                $decoded[$key][$field_key] = sanitize_text_field($field_value);
+            }
+        }
+        return json_encode($decoded);
+    }
+    return json_encode([]);
 }
-add_action('customize_controls_enqueue_scripts', 'enqueue_customizer_scripts');
-

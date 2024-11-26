@@ -1,3 +1,6 @@
+<?php
+if(get_theme_mod('hero_enabled', true)) :
+?>
 <section class="hero-section version1 section-padding relative" id="home">
     <div class="hero-section-content">
         <div class="container">
@@ -35,3 +38,5 @@
         </div>
     </div>
 </section>
+<?php
+endif;

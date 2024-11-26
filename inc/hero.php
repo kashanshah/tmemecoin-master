@@ -4,8 +4,19 @@ if (!defined('ABSPATH')) {
 }
 function memecoin_master_customize_register_hero_banner($wp_customize) {
     // Hero Section Panel
+    add_customizer_setting(
+        $wp_customize,
+        'hero_enabled',
+        true,
+        'Enable/disable hero section',
+        'checkbox',
+        'hero_section',
+        'hero_section',
+        'wp_validate_boolean',
+        '.hero-section'
+    );
     $wp_customize->add_section('hero_section', array(
-        'title'       => __('Hero Section', 'memecoin-master'),
+        'title'       => __('Hero Section', 'tknfc_textdomain'),
         'priority'    => 30,
         'description' => __('Customize the Hero Section'),
     ));
@@ -16,7 +27,7 @@ function memecoin_master_customize_register_hero_banner($wp_customize) {
         'sanitize_callback' => 'sanitize_text_field',
     ));
     $wp_customize->add_control('hero_title_control', array(
-        'label'    => __('Hero Title', 'memecoin-master'),
+        'label'    => __('Hero Title', 'tknfc_textdomain'),
         'section'  => 'hero_section',
         'settings' => 'hero_title',
         'type'     => 'text',
@@ -31,7 +42,7 @@ function memecoin_master_customize_register_hero_banner($wp_customize) {
         'sanitize_callback' => 'sanitize_text_field',
     ));
     $wp_customize->add_control('hero_description_control', array(
-        'label'    => __('Hero Description', 'memecoin-master'),
+        'label'    => __('Hero Description', 'tknfc_textdomain'),
         'section'  => 'hero_section',
         'settings' => 'hero_description',
         'type'     => 'textarea',
@@ -46,7 +57,7 @@ function memecoin_master_customize_register_hero_banner($wp_customize) {
         'sanitize_callback' => 'esc_url_raw',
     ));
     $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'hero_image_control', array(
-        'label'    => __('Hero Image', 'memecoin-master'),
+        'label'    => __('Hero Image', 'tknfc_textdomain'),
         'section'  => 'hero_section',
         'settings' => 'hero_image',
     )));

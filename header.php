@@ -6,9 +6,7 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
-<?php if (get_theme_mod('enable_preloader')) : ?>
 <?php get_template_part('template-parts/pre-loader') ?>
-<?php endif; ?>
 
 <!-- ##### Header Area Start ##### -->
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="banner">

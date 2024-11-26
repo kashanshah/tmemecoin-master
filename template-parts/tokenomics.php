@@ -1,113 +1,72 @@
+<?php
+if(get_theme_mod('tokenomics_enabled', true)) :
+// Fetch tokenomics data from Customizer settings
+$tokenomics_data = get_theme_mod('tokenomics_repeater', '[]');
+$tokenomics_items = json_decode($tokenomics_data, true);
+
+?>
 <!-- ##### Token Info Start ##### -->
 <div class="section-padding-100-70 dotted-bg relative" id="features">
     <div class="container">
         <div class="section-heading text-center">
+            <div class="dream-dots justify-content-center fadeInUp tokenomics-subtitle" data-wow-delay="0.2s">
+                <span class="gradient-t green"><?php echo get_theme_mod('tokenomics_subtitle', 'Our Tokenomics'); ?></span>
+            </div>
+            <h2 class="tokenomics-title fadeInUp"
+                data-wow-delay="0.3s"><?php echo get_theme_mod('tokenomics_title', 'Our Tokenomics'); ?></h2>
+            <p class="tokenomics-description fadeInUp" data-wow-delay="0.4s">
+                <?php echo get_theme_mod('tokenomics_description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo.'); ?>
+            </p>
+        </div>
+        <div class="row align-items-center justify-content-center">
             <?php
-            $features_sub_title = get_theme_mod('features_sub_title', 'Our Tokenomics');
-            $features_title = get_theme_mod('features_title', 'Our Tokenomics');
-            $features_description = get_theme_mod('features_description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo.');
+            if (empty($tokenomics_items)) {
+                $tokenomics_items = [
+                    ['subtitle' => 'Liquidity', 'title' => '30%', 'image_1' => get_template_directory_uri().'/assets/img/icons/t1.png', 'image_2' => ''],
+                    ['subtitle' => 'Donation', 'title' => '5%', 'image_1' => get_template_directory_uri().'/assets/img/icons/t2.png', 'image_2' => ''],
+                    ['subtitle' => 'Presale', 'title' => '50%', 'image_1' => get_template_directory_uri().'/assets/img/icons/t4.png', 'image_2' => ''],
+                    ['subtitle' => 'Dex', 'title' => '5%', 'image_1' => get_template_directory_uri().'/assets/img/icons/t8.png', 'image_2' => get_template_directory_uri().'/assets/img/icons/t3.png'],
+                    ['subtitle' => 'Marketing', 'title' => '5%', 'image_1' => get_template_directory_uri().'/assets/img/icons/t6.png', 'image_2' => get_template_directory_uri().'/assets/img/icons/t5.png'],
+                    ['subtitle' => 'Tax', 'title' => '0%', 'image_1' => get_template_directory_uri().'/assets/img/icons/t7.png', 'image_2' => get_template_directory_uri().'/assets/img/icons/t8.png'],
+                    ['subtitle' => 'Burn Tokens', 'title' => '5%', 'image_1' => get_template_directory_uri().'/assets/img/icons/t9.png', 'image_2' => ''],
+                ];
+            }
+            // Split items into chunks for columns (3 items per column)
+            $columns = array_chunk($tokenomics_items, 3);
+            $index = 0;
 
-            if (!empty($features_sub_title)) {
-                ?>
-                <div class="dream-dots justify-content-center fadeInUp features-sub-title" data-wow-delay="0.2s">
-                    <span class="gradient-t green"><?php echo esc_html($features_sub_title); ?></span>
-                </div>
-                <?php
-            }
-            ?>
-
-            <?php
-            if (!empty($features_title)) {
-                ?>
-                <h2 class="features-title fadeInUp" data-wow-delay="0.3s"><?php echo esc_html($features_title); ?></h2>
-                <?php
-            }
-            ?>
-            <?php
-            if (!empty($features_description)) {
-                ?>
-                <p class="features-description fadeInUp" data-wow-delay="0.4s"><?php echo esc_html($features_description); ?></p>
-                <?php
-            }
+            foreach ($columns as $column) : ?>
+                <?php foreach ($column as $item) : ?>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="who-we-contant mt-s token-information-div">
+                            <ul class="token-information">
+                                <li>
+                                    <?php if (!empty($item['image_1'])) : ?>
+                                        <img src="<?php echo esc_url($item['image_1']); ?>"
+                                             class="mon-img1 token-information-title-<?php echo $index; ?>-1"
+                                             alt="">
+                                    <?php endif; ?>
+                                    <h6 class="token-information-title-<?php echo $index; ?>">
+                                        <span class="gradient-t green mr-1"><?php echo esc_html($item['title']); ?></span>
+                                        <?php echo esc_html($item['subtitle']); ?>
+                                    </h6>
+                                    <?php if (!empty($item['image_2'])) : ?>
+                                        <img src="<?php echo esc_url($item['image_2']); ?>"
+                                             class="mon-img2 token-information-image_2-<?php echo $index; ?>"
+                                             alt="">
+                                    <?php endif; ?>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                <?php $index++; ?>
+            <?php endforeach;
             ?>
         </div>
-        <?php
-        $features_list = get_theme_mod('features_list', []);
-        if (!empty($features_list)) {
-            $features_list = json_decode($features_list, true);
-            ?>
-        <div class="row align-items-center">
-
-            <div class="col-lg-4 col-md-6">
-                <div class="who-we-contant mt-s">
-                    <ul class="token-information">
-                        <?php
-                        foreach ($features_list as $feature) {
-                            $title = !empty($feature['title']) ? $feature['title'] : '';
-                            $description = !empty($feature['description']) ? $feature['description'] : '';
-                            $image = !empty($feature['image']) ? $feature['image'] : '';
-                            ?>
-                            <li>
-                                <img src="<?php echo esc_url($image); ?>" class="mon-img1" alt="">
-                                <h6><span class="gradient-t green mr-1">30%</span> Liquidity</h6>
-                            </li>
-                            <li>
-                                <img src="<?php echo esc_url($image); ?>" class="mon-img1" alt="">
-                                <h6><span class="gradient-t green mr-1">5%</span> dex</h6>
-                                <img src="<?php echo esc_url($image); ?>" class="mon-img2" alt="">
-                            </li>
-                            <?php
-                        }
-                        ?>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="who-we-contant mt-s">
-                    <ul class="token-information">
-                        <li>
-                            <img src="img/icons/t2.png" class="mon-img1" alt="">
-                            <h6><span class="gradient-t green mr-1">5%</span> donation</h6>
-                        </li>
-                        <li>
-                            <img src="img/icons/t6.png" class="mon-img1" alt="">
-                            <h6><span class="gradient-t green mr-1">5%</span> marketing</h6>
-                            <img src="img/icons/t5.png" class="mon-img2" alt="">
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="who-we-contant mt-s">
-                    <ul class="token-information">
-                        <li>
-                            <img src="img/icons/t4.png" class="mon-img1" alt="">
-                            <h6><span class="gradient-t green mr-1">50%</span> presale</h6>
-                        </li>
-                        <li>
-                            <img src="img/icons/t7.png" class="mon-img1" alt="">
-                            <h6><span class="gradient-t green mr-1">0%</span> tax</h6>
-                            <img src="img/icons/t8.png" class="mon-img2" alt="">
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-4 offset-md-4 col-md-6">
-                <div class="who-we-contant mt-s">
-                    <ul class="token-information">
-                        <li>
-                            <img src="img/icons/t9.png" class="mon-img1" alt="">
-                            <h6><span class="gradient-t green mr-1">5%</span> Burn Tokens</h6>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <?php
-        }
-        ?>
     </div>
 </div>
-
+<!-- ##### Token Info End ##### -->
+<?php
+endif;
+?>
