@@ -1,0 +1,11 @@
+/*
+Theme Name: Memecoin Master
+Theme URI: https://www.teknoffice.com/
+Author: Teknoffice Technologies Inc.
+Author URI: https://www.teknoffice.com/
+Description: A custom WordPress theme for Memecoin projects.
+Version: 1.0.1
+*/
+.widget_footer_menu_widget li a {
+    color: inherit;
+}
